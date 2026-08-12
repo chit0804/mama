@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Happy Birthday, Mama ✈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Space+Mono:wght@400;700&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#132038;
+    --navy-deep:#0b1324;
+    --gold:#cf9b4e;
+    --gold-soft:#e8c98a;
+    --cream:#f6f0e2;
+    --paper:#fbf7ec;
+    --coral:#e2624f;
+    --ink:#1d2430;
+    --line: rgba(19,32,56,0.18);
+    --shadow: 0 20px 50px rgba(11,19,36,0.18);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    overflow-x:hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    margin:0;
+    font-weight:600;
+  }
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    font-size:0.68rem;
+    color:var(--gold);
+  }
+  img{max-width:100%; display:block;}
+  button{font-family:'Work Sans', sans-serif; cursor:pointer;}
+
+  /* ---------- INTRO / BOARDING SCREEN ---------- */
+  #intro{
+    position:fixed; inset:0; z-index:999;
+    background: radial-gradient(circle at 30% 20%, #1b2c4d, var(--navy-deep) 70%);
+    display:flex; align-items:center; justify-content:center;
+    transition: opacity 0.9s ease, visibility 0.9s ease;
+  }
+  #intro.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+  .ticket{
+    width:min(88vw, 380px);
+    background:var(--paper);
+    border-radius:14px;
+    padding:28px 26px 32px;
+    position:relative;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    transform: translateY(24px) scale(0.94);
+    opacity:0;
+    animation: ticketIn 1s cubic-bezier(.2,.8,.2,1) 0.3s forwards;
+    border: 1px dashed var(--line);
+  }
+  @keyframes ticketIn{
+    to{ transform: translateY(0) scale(1); opacity:1; }
+  }
+  .ticket::before, .ticket::after{
+    content:"";
+    position:absolute;
+    width:26px; height:26px;
+    background: radial-gradient(circle at center, transparent 60%, var(--navy-deep) 61%);
+    top:50%; transform:translateY(-50%);
+    background-color: transparent;
+  }
+  .ticket .stub-line{
+    position:absolute; left:0; right:0; top:66%;
+    border-top: 2px dashed var(--line);
+  }
+  .ticket-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .ticket .airline{
+    font-family:'Space Mono', monospace; font-size:0.62rem; letter-spacing:0.15em; color:var(--navy);
+    text-transform:uppercase;
+  }
+  .ticket h2{ font-size:1.5rem; color:var(--navy); margin-top:6px; line-height:1.15;}
+  .plane-path{ margin:18px 0 10px; position:relative; height:26px; }
+  .plane-path .dots{
+    position:absolute; left:8%; right:8%; top:50%; height:1px;
+    background-image: linear-gradient(to right, var(--line) 40%, transparent 0%);
+    background-size: 8px 1px; background-repeat: repeat-x;
+  }
+  .plane-path .plane{
+    position:absolute; top:50%; left:8%;
+    transform:translate(-50%,-55%);
+    font-size:1.1rem;
+    animation: flyAcross 2.6s ease-in-out 0.6s infinite;
+  }
+  @keyframes flyAcross{
+    0%{ left:8%; }
+    50%{ left:88%; }
+    50.01%{ left:8%; }
+    100%{ left:8%; }
+  }
+  .route{ display:flex; justify-content:space-between; font-family:'Space Mono', monospace; font-size:0.7rem; color: rgba(19,32,56,0.6);}
+  .ticket-meta{ display:flex; justify-content:space-between; margin-top:24px; }
+  .ticket-meta div{ font-family:'Space Mono', monospace; font-size:0.62rem; color: rgba(19,32,56,0.55); }
+  .ticket-meta strong{ display:block; font-size:0.9rem; color:var(--navy); margin-top:3px; letter-spacing:0.02em; }
+  #boardBtn{
+    margin-top:26px; width:100%; padding:14px 0;
+    background:var(--navy); color:var(--cream);
+    border:none; border-radius:8px;
+    font-family:'Space Mono', monospace; letter-spacing:0.1em; font-size:0.8rem;
+    text-transform:uppercase;
+    transition: transform 0.25s ease, background 0.25s ease;
+    opacity:0; animation: fadeUp 0.8s ease 1.1s forwards;
+  }
+  #boardBtn:active{ transform: scale(0.97); }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- CONFETTI CANVAS ---------- */
+  #confetti{ position:fixed; inset:0; pointer-events:none; z-index:850; }
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:80px 22px 60px;
+    position:relative;
+    background:
+      radial-gradient(circle at 12% 18%, rgba(207,155,78,0.14), transparent 40%),
+      radial-gradient(circle at 88% 82%, rgba(226,98,79,0.10), transparent 45%),
+      var(--cream);
+  }
+  .stamp{
+    width:120px; height:120px;
+    border:3px solid var(--coral);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    transform:rotate(-14deg) scale(2.4);
+    opacity:0;
+    color:var(--coral);
+    font-family:'Space Mono', monospace;
+    text-transform:uppercase;
+    font-size:0.62rem;
+    letter-spacing:0.08em;
+    text-align:center;
+    line-height:1.3;
+    margin-bottom:26px;
+    animation: stampDown 0.5s cubic-bezier(.2,.9,.3,1.4) 1.9s forwards;
+  }
+  @keyframes stampDown{
+    0%{ opacity:0; transform:rotate(-14deg) scale(2.4); }
+    60%{ opacity:1; }
+    100%{ opacity:0.92; transform:rotate(-14deg) scale(1); }
+  }
+  .hero .eyebrow{ opacity:0; animation: fadeUp 0.8s ease 2.2s forwards; }
+  .hero h1{
+    font-size: clamp(2.6rem, 9vw, 5.2rem);
+    color:var(--navy);
+    margin-top:14px;
+    line-height:1.02;
+    opacity:0; animation: fadeUp 0.9s ease 2.35s forwards;
+  }
+  .hero h1 em{
+    font-style: italic; color:var(--coral); font-weight:500;
+  }
+  .hero p.sub{
+    max-width:520px; margin:22px auto 0;
+    font-size:1.05rem; line-height:1.65; color: rgba(29,36,48,0.75);
+    opacity:0; animation: fadeUp 0.9s ease 2.5s forwards;
+  }
+  .scroll-cue{
+    margin-top:52px; font-family:'Space Mono', monospace; font-size:0.65rem;
+    letter-spacing:0.15em; text-transform:uppercase; color: rgba(19,32,56,0.5);
+    opacity:0; animation: fadeUp 0.9s ease 2.7s forwards;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .scroll-cue .bar{ width:1px; height:34px; background: var(--gold); animation: growBar 1.6s ease-in-out infinite; }
+  @keyframes growBar{ 0%,100%{ transform:scaleY(0.4); opacity:0.4;} 50%{ transform:scaleY(1); opacity:1;} }
+
+  section{ padding:100px 22px; position:relative; }
+  .section-inner{ max-width:1080px; margin:0 auto; }
+  .section-head{ text-align:center; margin-bottom:54px; }
+  .section-head h2{ font-size:clamp(1.9rem,5vw,2.9rem); color:var(--navy); margin-top:10px; }
+  .section-head p{ max-width:480px; margin:14px auto 0; color:rgba(29,36,48,0.68); line-height:1.6; }
+
+  .reveal{ opacity:0; transform:translateY(36px); transition: all 0.9s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- PASSPORT / STORY STRIP ---------- */
+  .passport-strip{
+    background:var(--navy);
+    color:var(--cream);
+    padding:90px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .passport-strip::before{
+    content:""; position:absolute; inset:0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1.4px);
+    background-size: 22px 22px;
+    opacity:0.5;
+  }
+  .passport-strip .section-inner{ position:relative; z-index:2; }
+  .passport-strip .eyebrow{ color:var(--gold-soft); }
+  .passport-strip h2{ color:var(--cream); }
+  .passport-strip .section-head p{ color: rgba(246,240,226,0.72); }
+  .stat-row{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:20px;
+  }
+  .stat-card{
+    border:1px solid rgba(246,240,226,0.16);
+    border-radius:12px; padding:26px 16px; text-align:center;
+    background: rgba(246,240,226,0.03);
+  }
+  .stat-card .num{ font-family:'Fraunces', serif; font-size:2.1rem; color:var(--gold-soft); }
+  .stat-card .label{ font-family:'Space Mono', monospace; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color: rgba(246,240,226,0.65); margin-top:6px; }
+
+  /* ---------- SCRAPBOOK GALLERY ---------- */
+  .scrapbook{
+    display:flex; gap:26px; overflow-x:auto; scroll-snap-type:x mandatory;
+    padding:20px 6vw 40px; margin:0 -22px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .scrapbook::-webkit-scrollbar{ height:6px; }
+  .scrapbook::-webkit-scrollbar-thumb{ background:var(--gold); border-radius:6px; }
+  .postcard{
+    flex:0 0 auto; width:260px; scroll-snap-align:center;
+    background:var(--paper);
+    padding:14px 14px 20px;
+    border-radius:4px;
+    box-shadow: var(--shadow);
+    transform: rotate(var(--r,0deg));
+    transition: transform 0.35s ease;
+  }
+  .postcard:hover{ transform: rotate(0deg) translateY(-6px); }
+  .postcard .frame{ overflow:hidden; border-radius:2px; aspect-ratio: 4/5; background:#ddd; }
+  .postcard img{ width:100%; height:100%; object-fit:cover; }
+  .postcard .cap{
+    display:flex; justify-content:space-between; align-items:baseline; margin-top:12px;
+  }
+  .postcard .cap .place{ font-family:'Fraunces', serif; font-style:italic; font-size:1.02rem; color:var(--navy); }
+  .postcard .cap .tag{ font-family:'Space Mono', monospace; font-size:0.58rem; color:var(--coral); letter-spacing:0.06em; }
+
+  /* ---------- LETTER SECTION ---------- */
+  .letter-wrap{ display:flex; justify-content:center; }
+  .letter{
+    max-width:640px; width:100%;
+    background:var(--paper);
+    border-radius:6px;
+    padding:48px 38px;
+    box-shadow: var(--shadow);
+    position:relative;
+    border-left:5px solid var(--gold);
+  }
+  .letter .mark{
+    position:absolute; top:-18px; right:26px;
+    font-family:'Space Mono', monospace; font-size:0.6rem; color:var(--coral);
+    background:var(--cream); padding:4px 10px; border:1px dashed var(--coral); border-radius:20px;
+    letter-spacing:0.06em;
+  }
+  .letter p{
+    font-family:'Fraunces', serif; font-size:1.18rem; line-height:1.85; color:var(--ink); margin:0 0 20px;
+  }
+  .letter p:first-of-type::first-letter{
+    font-size:3.2rem; float:left; line-height:0.8; padding-right:8px; padding-top:8px; color:var(--coral);
+  }
+  .letter .sign{ font-family:'Fraunces', serif; font-style:italic; font-size:1.15rem; color:var(--navy); margin-top:8px; text-align:right;}
+
+  /* ---------- WISHES CAROUSEL ---------- */
+  .wishes{ background: var(--cream); }
+  .wish-track{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .wish-card{
+    background:var(--paper); border-radius:12px; padding:28px 24px;
+    border:1px solid var(--line); position:relative;
+  }
+  .wish-card .quote-mark{ font-family:'Fraunces', serif; font-size:2.6rem; color:var(--gold); line-height:0.4; display:block; margin-bottom:10px;}
+  .wish-card p{ font-size:0.98rem; line-height:1.65; color: rgba(29,36,48,0.8); margin:0;}
+  .wish-card .who{ margin-top:16px; font-family:'Space Mono', monospace; font-size:0.62rem; letter-spacing:0.06em; color:var(--coral); text-transform:uppercase;}
+
+  /* ---------- CAKE / CANDLE ---------- */
+  .cake-section{ text-align:center; }
+  .cake-wrap{ display:flex; justify-content:center; margin-top:20px; }
+  .cake{ display:flex; flex-direction:column; align-items:center; width:220px; }
+  .candle-holder{
+    position:relative; width:12px; height:56px; z-index:3;
+    display:flex; align-items:flex-end; justify-content:center;
+  }
+  .candle{
+    width:11px; height:42px;
+    background: linear-gradient(var(--coral), var(--gold));
+    background-color: var(--coral); /* fallback so the stick is never invisible */
+    border-radius:3px;
+    box-shadow: inset -2px 0 3px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+  }
+  .flame{
+    position:absolute; top:0; left:50%; transform:translate(-50%,0);
+    width:14px; height:20px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    background: radial-gradient(circle at 50% 70%, #fff6c8, #ffb347 60%, #ff7043 100%);
+    box-shadow: 0 0 14px rgba(255,150,60,0.55);
+    transform-origin:bottom center;
+    animation: flicker 0.7s ease-in-out infinite alternate;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  @keyframes flicker{
+    0%{ transform:translate(-50%,0) rotate(-3deg) scale(1); }
+    100%{ transform:translate(-50%,0) rotate(3deg) scale(1.08); }
+  }
+  .flame.out{ opacity:0; transform:translate(-50%,0) scale(0.2); }
+  .layer{ background:var(--paper); border:1px solid var(--line); border-radius:14px; position:relative; z-index:1; }
+  .layer.top{ height:60px; width:184px; margin-top:-4px; }
+  .layer.bottom{ height:80px; width:220px; margin-top:-1px; background:var(--gold-soft); border-color:var(--line); }
+  .sprinkles{ position:absolute; inset:0; }
+  #blowBtn{
+    margin-top:34px; padding:14px 34px; border-radius:30px; border:2px solid var(--navy);
+    background:transparent; color:var(--navy); font-family:'Space Mono', monospace; letter-spacing:0.08em;
+    font-size:0.78rem; text-transform:uppercase; transition: all 0.3s ease;
+  }
+  #blowBtn:hover{ background:var(--navy); color:var(--cream); }
+  #blowBtn:disabled{ opacity:0.4; }
+  .cake-caption{ margin-top:18px; font-family:'Fraunces', serif; font-style:italic; color:var(--navy); min-height:26px; font-size:1.05rem;}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--navy-deep); color:var(--cream);
+    text-align:center; padding:70px 22px 46px;
+  }
+  footer .eyebrow{ color:var(--gold-soft); }
+  footer h2{ color:var(--cream); font-size:clamp(1.8rem,5vw,2.6rem); margin-top:10px; }
+  footer p{ color: rgba(246,240,226,0.65); max-width:420px; margin:16px auto 0; line-height:1.6; }
+  footer .stamp-final{
+    margin-top:34px; display:inline-block; border:2px dashed var(--gold);
+    padding:10px 22px; border-radius:8px; font-family:'Space Mono', monospace;
+    font-size:0.68rem; letter-spacing:0.12em; color:var(--gold-soft); text-transform:uppercase;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 720px){
+    section{ padding:70px 18px; }
+    .stat-row{ grid-template-columns:repeat(2,1fr); }
+    .wish-track{ grid-template-columns:1fr; }
+    .letter{ padding:34px 24px; }
+    .postcard{ width:220px; }
+    .hero{ padding:70px 18px 50px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO / BOARDING PASS -->
+<div id="intro">
+  <div class="ticket">
+    <div class="ticket-top">
+      <div>
+        <div class="airline">Wanderlust Airways</div>
+        <h2>Boarding<br>Pass</h2>
+      </div>
+      <div style="font-size:1.6rem;">✈</div>
+    </div>
+    <div class="plane-path">
+      <div class="dots"></div>
+      <div class="plane">✈</div>
+    </div>
+    <div class="route"><span>HOME</span><span>ANOTHER GREAT YEAR</span></div>
+    <div class="stub-line"></div>
+    <div class="ticket-meta">
+      <div>PASSENGER<strong>MAMA</strong></div>
+      <div>GATE<strong>04</strong></div>
+      <div>SEAT<strong>1A</strong></div>
+    </div>
+    <button id="boardBtn">Tap to board →</button>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="stamp">Happy<br>Landing<br>★ 2026 ★</div>
+  <div class="eyebrow">A Passport To One More Year</div>
+  <h1>Happy Birthday,<br><em>Mama</em></h1>
+  <p class="sub">From first class window seats to Times Square crossings, from the Merlion's spray to the wind on the Brooklyn Bridge — here's to the man who turns every trip, and every day, into a good story.</p>
+  <div class="scroll-cue"><div class="bar"></div>Scroll the journey</div>
+</header>
+
+<!-- STORY / STATS -->
+<section class="passport-strip">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <div class="eyebrow">Frequent Flyer Of Life</div>
+      <h2>The stamps in your passport<br>are just the beginning</h2>
+      <p>A few numbers that don't come close to covering it — but we tried anyway.</p>
+    </div>
+    <div class="stat-row reveal">
+      <div class="stat-card"><div class="num">∞</div><div class="label">Miles Of Love</div></div>
+      <div class="stat-card"><div class="num">7+</div><div class="label">Cities Visited</div></div>
+      <div class="stat-card"><div class="num">1A</div><div class="label">Favourite Seat</div></div>
+      <div class="stat-card"><div class="num">100%</div><div class="label">Smiles Given</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section>
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <div class="eyebrow">Postcards From The Road</div>
+      <h2>Snapshots worth keeping</h2>
+      <p>A little scrapbook of the year in motion — swipe through.</p>
+    </div>
+  </div>
+  <div class="scrapbook reveal" id="scrapbook">
+    <div class="postcard" style="--r:-3deg"><div class="frame"><img src="plane.jpeg" alt="Business class, cloud nine"></div><div class="cap"><span class="place">Cloud Nine</span><span class="tag">SEAT 1A</span></div></div>
+    <div class="postcard" style="--r:2deg"><div class="frame"><img src="6.jpeg" alt="Times Square, New York"></div><div class="cap"><span class="place">New York</span><span class="tag">NYC</span></div></div>
+    <div class="postcard" style="--r:-2deg"><div class="frame"><img src="3.jpeg" alt="Brooklyn Bridge"></div><div class="cap"><span class="place">Brooklyn Bridge</span><span class="tag">NYC</span></div></div>
+    <div class="postcard" style="--r:3deg"><div class="frame"><img src="4.jpeg"alt="Merlion, Singapore"></div><div class="cap"><span class="place">Merlion Park</span><span class="tag">SG</span></div></div>
+    <div class="postcard" style="--r:-3deg"><div class="frame"><img src="5.jpeg" alt="Somewhere at 35,000 feet"></div><div class="cap"><span class="place">35,000 Ft</span><span class="tag">EN ROUTE</span></div></div>
+    <div class="postcard" style="--r:2deg"><div class="frame"><img src="2.jpeg" alt="Chicago streets"></div><div class="cap"><span class="place">Chicago</span><span class="tag">USA</span></div></div>
+    <div class="postcard" style="--r:-2deg"><div class="frame"><img src="7.jpeg" alt="Singapore, with her"></div><div class="cap"><span class="place">Singapore</span><span class="tag">TOGETHER</span></div></div>
+  </div>
+</section>
+
+<!-- LETTER -->
+<section>
+  <div class="section-inner letter-wrap">
+    <div class="letter reveal">
+      <span class="mark">Handwritten · Sealed With Love</span>
+      <p>Dear Mama, some people collect souvenirs — you collect moments, and somehow make everyone around you feel like they were invited along, whether you were sitting in seat 1A or standing in the middle of Times Square.</p>
+      <p>Today isn't just another entry stamp in your passport. It's a reminder of how much warmth, laughter, and quiet strength you carry with you, wherever the next boarding gate takes you.</p>
+      <p>So here's to more window seats, more skylines, more silly photos on bridges, and many, many more years of you being exactly who you are. Happy Birthday.</p>
+      <div class="sign">— With all our love</div>
+    </div>
+  </div>
+</section>
+
+<!-- WISHES -->
+<section class="wishes">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <div class="eyebrow">Little Notes</div>
+      <h2>Words for a wonderful man</h2>
+    </div>
+    <div class="wish-track reveal">
+      <div class="wish-card"><span class="quote-mark">"</span><p>May your year ahead have better legroom than economy and twice the adventure of business class.</p><div class="who">— A Fellow Traveller</div></div>
+      <div class="wish-card"><span class="quote-mark">"</span><p>Here's to a man who makes every city feel a little more like home, and home feel like the best destination of all.</p><div class="who">— Family</div></div>
+      <div class="wish-card"><span class="quote-mark">"</span><p>Not all heroes wear capes — some just wear comfortable travel shoes and carry the best stories.</p><div class="who">— The Kids</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CAKE -->
+<section class="cake-section">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <div class="eyebrow">Final Boarding Call</div>
+      <h2>Make a wish before takeoff</h2>
+      <p>Go on — one candle, one wish, one wonderful year ahead.</p>
+    </div>
+    <div class="cake-wrap reveal">
+      <div class="cake">
+        <div class="candle-holder">
+          <div class="flame" id="flame"></div>
+          <div class="candle"></div>
+        </div>
+        <div class="layer top"></div>
+        <div class="layer bottom"></div>
+      </div>
+    </div>
+    <button id="blowBtn">🎂 Blow the candle</button>
+    <div class="cake-caption" id="cakeCaption"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="eyebrow">Journey Continues</div>
+  <h2>Happy Birthday, Mama ✈</h2>
+  <p>May this new year take you further, closer, and deeper into everything that makes you happy.</p>
+  <div class="stamp-final">✈ Cleared For Another Wonderful Year ✈</div>
+</footer>
+
+<script>
+  // Intro boarding pass -> confetti burst
+  const introEl = document.getElementById('intro');
+  const boardBtn = document.getElementById('boardBtn');
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  let particles = [];
+  const colors = ['#cf9b4e', '#e2624f', '#f6f0e2', '#132038', '#e8c98a'];
+  function burstConfetti(x, y, count){
+    for(let i=0;i<count;i++){
+      particles.push({
+        x, y,
+        vx: (Math.random()-0.5)*10,
+        vy: Math.random()*-10 - 4,
+        size: Math.random()*6+4,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        rot: Math.random()*360,
+        vr: (Math.random()-0.5)*10,
+        gravity: 0.25 + Math.random()*0.1,
+        life: 0
+      });
+    }
+  }
+  function animateConfetti(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      p.vy += p.gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      p.life++;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+      ctx.restore();
+    });
+    particles = particles.filter(p => p.y < canvas.height + 40 && p.life < 400);
+    requestAnimationFrame(animateConfetti);
+  }
+  animateConfetti();
+
+  boardBtn.addEventListener('click', ()=>{
+    introEl.classList.add('hide');
+    burstConfetti(canvas.width/2, canvas.height*0.3, 140);
+    setTimeout(()=> introEl.style.display='none', 950);
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting) e.target.classList.add('in');
+    });
+  }, { threshold: 0.18 });
+  revealEls.forEach(el=> obs.observe(el));
+
+  // Candle blow
+  const blowBtn = document.getElementById('blowBtn');
+  const flame = document.getElementById('flame');
+  const caption = document.getElementById('cakeCaption');
+  const captions = [
+    "Wish sent to the universe 🌙",
+    "May it all come true, Mama 💛",
+    "Cleared for takeoff, wish granted ✈"
+  ];
+  blowBtn.addEventListener('click', ()=>{
+    if(flame.classList.contains('out')) return;
+    flame.classList.add('out');
+    blowBtn.disabled = true;
+    caption.textContent = captions[Math.floor(Math.random()*captions.length)];
+    burstConfetti(innerWidth/2, innerHeight*0.55, 100);
+  });
+</script>
+</body>
+</html>
